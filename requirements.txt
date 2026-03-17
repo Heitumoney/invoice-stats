@@ -11,5 +11,9 @@ PyMuPDF>=1.23.0
 # API 请求
 requests>=2.31.0
 
+# 网页版依赖
+flask>=3.0.0
+werkzeug>=3.0.0
+
 # OCR（可选，本地版需要）
 # pytesseract>=0.3.10
