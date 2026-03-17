@@ -1,61 +1,91 @@
 # 📁 发票统计工具
 
-简单的发票识别与统计工具，支持 Mac/Windows/Linux。
+发票识别与统计工具，支持 **本地 OCR** 和 **大模型 API** 两种方式。
 
 ## 功能
 
 - ✅ 支持 JPG/PNG/PDF 多格式发票
-- ✅ OCR 自动识别金额、日期、商家
+- ✅ 本地 OCR 识别（Tesseract）
+- ✅ 大模型 API 识别（Qwen-VL / GPT-4V / GLM-4V）⭐推荐
 - ✅ 导出 Excel 统计报表
 - ✅ 简洁图形界面
 
 ---
 
-## 🍎 Mac 用户 - 两种方式
+## 🚀 快速开始（API 版 - 推荐）
 
-### 方式一：一键安装（推荐）
+**无需安装 Tesseract，识别更准确！**
+
+### 1. 获取 API Key
+
+**阿里 Qwen-VL（推荐，国内可用）：**
+1. 访问 https://dashscope.console.aliyun.com/
+2. 注册/登录 → API Key 管理
+3. 创建 API Key（新用户有免费额度）
+
+**智谱 GLM-4V：**
+1. 访问 https://open.bigmodel.cn/
+2. 注册 → API Key
+
+**OpenAI GPT-4V：**
+1. 访问 https://platform.openai.com/
+2. API Keys → 创建
+
+### 2. 安装依赖
 
 ```bash
-# 1. 下载后打开终端
-cd ~/Downloads/invoice_stats
-
-# 2. 运行一键安装脚本
-chmod +x install-mac.sh
-./install-mac.sh
+cd ~/Downloads/invoice-stats-main
+pip3 install pandas openpyxl pillow pymupdf requests
 ```
 
-等待完成后，在 `dist/` 文件夹找到 **发票统计.app**，拖到应用程序文件夹即可。
-
-### 方式二：直接运行 Python 脚本
+### 3. 运行
 
 ```bash
-# 1. 安装 Tesseract
+python3 invoice_stats_api.py
+```
+
+### 4. 使用
+
+1. 输入 API Key
+2. 选择发票文件
+3. 点击"开始识别"
+4. 导出 Excel
+
+---
+
+## 🍎 Mac 用户 - 本地 OCR 版
+
+需要安装 Tesseract，适合无网络或大量发票场景。
+
+```bash
+# 1. 设置镜像加速
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+
+# 2. 安装 Tesseract
 brew install tesseract tesseract-lang
 
-# 2. 安装依赖
+# 3. 安装依赖
 pip3 install -r requirements.txt
 
-# 3. 运行
-python3 invoice_stats.py
+# 4. 打包应用
+python3 -m PyInstaller --name="发票统计" --windowed --onefile invoice_stats.py
+
+# 5. 打开
+open dist/发票统计.app
 ```
 
 ---
 
-## 使用说明
+## API 对比
 
-1. 点击"选择文件"或"批量选择"添加发票
-2. 点击"开始识别"进行 OCR 识别
-3. 查看识别结果预览
-4. 点击"导出 Excel"保存统计结果
-
----
-
-## 注意事项
-
-- OCR 识别准确率取决于发票图片质量
-- 建议扫描或拍照时保持发票平整、光线充足
-- 识别结果可手动在 Excel 中修正
-- Mac 首次运行 .app 可能需要右键→打开（安全策略）
+| API | 价格 | 速度 | 准确率 | 推荐 |
+|-----|------|------|--------|------|
+| Qwen-VL | ¥0.01/张 | 快 | ⭐⭐⭐⭐⭐ | ✅ 国内首选 |
+| GLM-4V | ¥0.005/张 | 快 | ⭐⭐⭐⭐ | ✅ 便宜 |
+| GPT-4V | $0.01/张 | 中 | ⭐⭐⭐⭐⭐ | 需要代理 |
+| Tesseract | 免费 | 快 | ⭐⭐⭐ | 本地离线 |
 
 ---
 
@@ -63,27 +93,28 @@ python3 invoice_stats.py
 
 ```
 invoice_stats/
-├── invoice_stats.py    # 主程序
-├── requirements.txt    # Python 依赖
-├── build-mac.sh        # Mac 打包脚本
-├── install-mac.sh      # Mac 一键安装脚本
-└── README.md          # 说明文档
+├── invoice_stats.py        # 本地 OCR 版
+├── invoice_stats_api.py    # API 版（推荐）
+├── requirements.txt        # Python 依赖
+├── install-mac.sh          # Mac 安装脚本
+├── build-mac.sh            # Mac 打包脚本
+└── README.md              # 说明文档
 ```
 
 ---
 
 ## 常见问题
 
-**Q: 提示找不到 tesseract？**
-```bash
-brew install tesseract tesseract-lang
-```
-
-**Q: Mac 无法打开 .app？**
-- 右键点击应用 → 打开 → 确认打开
-- 或：系统偏好设置 → 安全性 → 允许打开
+**Q: API Key 安全吗？**
+- API Key 只保存在内存中，关闭程序即清除
+- 也可设置环境变量：`export INVOICE_API_KEY=xxx`
 
 **Q: 识别不准确？**
-- 确保发票图片清晰
-- 光线均匀，无阴影
-- 尽量使用扫描件而非拍照
+- 确保发票图片清晰、光线均匀
+- 优先使用扫描件而非拍照
+- API 版准确率远高于本地 OCR
+
+**Q: 费用多少？**
+- Qwen-VL：新用户送 ¥20 额度（约 2000 张发票）
+- GLM-4V：新用户送 ¥10 额度
+- 单张发票约 ¥0.005-0.01

@@ -6,7 +6,10 @@ openpyxl>=3.1.0
 
 # 图片处理
 Pillow>=10.0.0
-pytesseract>=0.3.10
-
-# PDF 处理
 PyMuPDF>=1.23.0
+
+# API 请求
+requests>=2.31.0
+
+# OCR（可选，本地版需要）
+# pytesseract>=0.3.10
